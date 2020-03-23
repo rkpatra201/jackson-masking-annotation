@@ -1,14 +1,16 @@
 package com.java.mask.model;
 
+import java.util.function.Function;
+
 public class MaskingContext {
     private String regex;
     private String beanId;
-    private String input;
+    private Object input;
+    private Character maskingCharacter;
 
-    public MaskingContext(String regex, String beanId, String input) {
+    public MaskingContext(String regex, String beanId) {
         this.regex = regex;
         this.beanId = beanId;
-        this.input = input;
     }
 
     public String getRegex() {
@@ -27,11 +29,19 @@ public class MaskingContext {
         this.beanId = beanId;
     }
 
-    public String getInput() {
+    public Object getInput() {
         return input;
     }
 
-    public void setInput(String input) {
+    public void setInput(Object input) {
         this.input = input;
+    }
+
+    public Character getMaskingCharacter() {
+        return maskingCharacter;
+    }
+
+    public void setMaskingCharacter(Character maskingCharacter) {
+        this.maskingCharacter = maskingCharacter;
     }
 }

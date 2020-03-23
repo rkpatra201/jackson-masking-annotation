@@ -14,33 +14,31 @@ import com.java.mask.model.MaskingContext;
 
 import java.io.IOException;
 
-public class MaskSerializer extends StdSerializer<String> implements ContextualSerializer {
-
+public class MaskSerializer extends StdSerializer implements ContextualSerializer {
 
     private MaskingContext maskingContext;
 
     public MaskSerializer(MaskingContext maskingContext) {
-        super(String.class);
+        super(Object.class);
         this.maskingContext = maskingContext;
     }
 
     public MaskSerializer() {
-        super(String.class);
+        super(Object.class);
     }
+  
+    public void serialize(Object value, JsonGenerator jgen, SerializerProvider provider) throws IOException {
+        Object maskedValue = null;
 
-    public void serialize(String value, JsonGenerator jgen, SerializerProvider provider) throws IOException {
-        String maskedValue = null;
-        if (maskingContext.getRegex() != null && maskingContext.getRegex().length() > 0) {
-            maskedValue = value.replaceAll(maskingContext.getRegex(), "X");
-        } else {
-            MaskingHandlerManager manager = MaskingHandlerManager.getInstance();
-            IMaskingHandler handler = manager.getHandler(maskingContext.getBeanId());
-            if (handler == null) {
-                throw new UnsupportedOperationException("no masking strategy found for the beanId: " + maskingContext.getBeanId());
-            }
-            maskedValue = handler.doMasking(maskingContext);
-        }
-        jgen.writeString(maskedValue);
+        MaskingHandlerManager manager = MaskingHandlerManager.getInstance();
+        maskingContext.setInput(value);
+        IMaskingHandler handler = manager.getHandler(maskingContext.getBeanId());
+        if (handler == null) {
+            throw new UnsupportedOperationException("no masking strategy found for the beanId: " + maskingContext.getBeanId());
+       }
+        maskedValue = handler.doMasking(maskingContext);
+
+        jgen.writeObject(maskedValue);
     }
 
     public JsonSerializer<?> createContextual(SerializerProvider prov, BeanProperty property) throws JsonMappingException {
@@ -53,7 +51,8 @@ public class MaskSerializer extends StdSerializer<String> implements ContextualS
         if (ann != null) {
             beanId = ann.beanId();
             regex = ann.regex();
-            MaskingContext maskingContext = new MaskingContext(regex, beanId, property.toString());
+            MaskingContext maskingContext = new MaskingContext(regex, beanId);
+            maskingContext.setMaskingCharacter(ann.maskingCharacter());
             return new MaskSerializer(maskingContext);
         }
         return null;
