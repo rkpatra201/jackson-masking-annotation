@@ -26,7 +26,7 @@ public class MaskSerializer extends StdSerializer implements ContextualSerialize
     public MaskSerializer() {
         super(Object.class);
     }
-
+  
     public void serialize(Object value, JsonGenerator jgen, SerializerProvider provider) throws IOException {
         Object maskedValue = null;
 
@@ -35,7 +35,7 @@ public class MaskSerializer extends StdSerializer implements ContextualSerialize
         IMaskingHandler handler = manager.getHandler(maskingContext.getBeanId());
         if (handler == null) {
             throw new UnsupportedOperationException("no masking strategy found for the beanId: " + maskingContext.getBeanId());
-        }
+       }
         maskedValue = handler.doMasking(maskingContext);
 
         jgen.writeObject(maskedValue);
