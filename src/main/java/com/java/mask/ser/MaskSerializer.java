@@ -38,7 +38,7 @@ public class MaskSerializer extends StdSerializer<String> implements ContextualS
             if (handler == null) {
                 throw new UnsupportedOperationException("no masking strategy found for the beanId: " + maskingContext.getBeanId());
             }
-            maskedValue = handler.doMasking(value);
+            maskedValue = handler.doMasking(maskingContext);
         }
         jgen.writeString(maskedValue);
     }
