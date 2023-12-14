@@ -1,0 +1,3 @@
+[submodule "submodule-project"]
+	path = submodule-project
+	url = git@github.com:rkpatra201/jackson-polymorphic-desrializer.git
